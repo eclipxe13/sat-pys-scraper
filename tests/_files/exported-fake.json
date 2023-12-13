@@ -1,0 +1,173 @@
+[
+    {
+        "key": 1,
+        "name": "Productos",
+        "segments": [
+            {
+                "key": 27,
+                "name": "Herramientas y Maquinaria General",
+                "families": [
+                    {
+                        "key": 2711,
+                        "name": "Herramientas de mano",
+                        "classes": [
+                            {
+                                "key": 271127,
+                                "name": "Herramientas mec\u00e1nicas"
+                            },
+                            {
+                                "key": 271130,
+                                "name": "Cepillos"
+                            },
+                            {
+                                "key": 271131,
+                                "name": "Herramientas de arrastre"
+                            }
+                        ]
+                    },
+                    {
+                        "key": 2712,
+                        "name": "Maquinaria y equipo hidr\u00e1ulico",
+                        "classes": [
+                            {
+                                "key": 271216,
+                                "name": "Pistones y cilindros hidr\u00e1ulicos"
+                            },
+                            {
+                                "key": 271217,
+                                "name": "Accesorios de tuber\u00eda y manga hidr\u00e1ulica"
+                            },
+                            {
+                                "key": 271218,
+                                "name": "Herramientas hidr\u00e1ulicas"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": 32,
+                "name": "Componentes y Suministros Electr\u00f3nicos",
+                "families": [
+                    {
+                        "key": 3211,
+                        "name": "Dispositivo semiconductor discreto",
+                        "classes": [
+                            {
+                                "key": 321115,
+                                "name": "Diodos"
+                            },
+                            {
+                                "key": 321116,
+                                "name": "Transistores"
+                            },
+                            {
+                                "key": 321117,
+                                "name": "Aparatos semiconductores"
+                            }
+                        ]
+                    },
+                    {
+                        "key": 3212,
+                        "name": "Componentes pasivos discretos",
+                        "classes": [
+                            {
+                                "key": 321215,
+                                "name": "Capacitores"
+                            },
+                            {
+                                "key": 321217,
+                                "name": "Componentes discretos"
+                            },
+                            {
+                                "key": 321218,
+                                "name": "Filtros de se\u00f1ales"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "key": 2,
+        "name": "Servicios",
+        "segments": [
+            {
+                "key": 85,
+                "name": "Servicios de salud",
+                "families": [
+                    {
+                        "key": 8512,
+                        "name": "Pr\u00e1ctica m\u00e9dica",
+                        "classes": [
+                            {
+                                "key": 851215,
+                                "name": ""
+                            },
+                            {
+                                "key": 851216,
+                                "name": "Servicios m\u00e9dicos de doctores especialistas"
+                            },
+                            {
+                                "key": 851218,
+                                "name": "Laboratorios m\u00e9dicos"
+                            },
+                            {
+                                "key": 851219,
+                                "name": "Farmac\u00e9uticos"
+                            }
+                        ]
+                    },
+                    {
+                        "key": 8513,
+                        "name": "Ciencia m\u00e9dica, investigaci\u00f3n y experimentaci\u00f3n",
+                        "classes": [
+                            {
+                                "key": 851315,
+                                "name": "Servicios de medicina experimental"
+                            },
+                            {
+                                "key": 851316,
+                                "name": "\u00c9tica m\u00e9dica"
+                            },
+                            {
+                                "key": 851317,
+                                "name": "Ciencia e investigaci\u00f3n m\u00e9dica"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "key": 91,
+                "name": "Servicios Personales y Dom\u00e9sticos",
+                "families": [
+                    {
+                        "key": 9110,
+                        "name": "Aspecto personal",
+                        "classes": []
+                    },
+                    {
+                        "key": 9111,
+                        "name": "Asistencia dom\u00e9stica y personal",
+                        "classes": [
+                            {
+                                "key": 911115,
+                                "name": "Servicios de lavander\u00eda"
+                            },
+                            {
+                                "key": 911116,
+                                "name": "Asistencia y cuidado del hogar"
+                            },
+                            {
+                                "key": 911117,
+                                "name": "Servicios de compra y trueque de consumo"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

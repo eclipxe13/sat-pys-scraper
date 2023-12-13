@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<psy>
+  <type key="1" name="Productos">
+    <segment key="27" name="Herramientas y Maquinaria General">
+      <family key="2711" name="Herramientas de mano">
+        <class key="271127" name="Herramientas mec&#xE1;nicas"/>
+        <class key="271130" name="Cepillos"/>
+        <class key="271131" name="Herramientas de arrastre"/>
+      </family>
+      <family key="2712" name="Maquinaria y equipo hidr&#xE1;ulico">
+        <class key="271216" name="Pistones y cilindros hidr&#xE1;ulicos"/>
+        <class key="271217" name="Accesorios de tuber&#xED;a y manga hidr&#xE1;ulica"/>
+        <class key="271218" name="Herramientas hidr&#xE1;ulicas"/>
+      </family>
+    </segment>
+    <segment key="32" name="Componentes y Suministros Electr&#xF3;nicos">
+      <family key="3211" name="Dispositivo semiconductor discreto">
+        <class key="321115" name="Diodos"/>
+        <class key="321116" name="Transistores"/>
+        <class key="321117" name="Aparatos semiconductores"/>
+      </family>
+      <family key="3212" name="Componentes pasivos discretos">
+        <class key="321215" name="Capacitores"/>
+        <class key="321217" name="Componentes discretos"/>
+        <class key="321218" name="Filtros de se&#xF1;ales"/>
+      </family>
+    </segment>
+  </type>
+  <type key="2" name="Servicios">
+    <segment key="85" name="Servicios de salud">
+      <family key="8512" name="Pr&#xE1;ctica m&#xE9;dica">
+        <class key="851215" name=""/>
+        <class key="851216" name="Servicios m&#xE9;dicos de doctores especialistas"/>
+        <class key="851218" name="Laboratorios m&#xE9;dicos"/>
+        <class key="851219" name="Farmac&#xE9;uticos"/>
+      </family>
+      <family key="8513" name="Ciencia m&#xE9;dica, investigaci&#xF3;n y experimentaci&#xF3;n">
+        <class key="851315" name="Servicios de medicina experimental"/>
+        <class key="851316" name="&#xC9;tica m&#xE9;dica"/>
+        <class key="851317" name="Ciencia e investigaci&#xF3;n m&#xE9;dica"/>
+      </family>
+    </segment>
+    <segment key="91" name="Servicios Personales y Dom&#xE9;sticos">
+      <family key="9110" name="Aspecto personal"/>
+      <family key="9111" name="Asistencia dom&#xE9;stica y personal">
+        <class key="911115" name="Servicios de lavander&#xED;a"/>
+        <class key="911116" name="Asistencia y cuidado del hogar"/>
+        <class key="911117" name="Servicios de compra y trueque de consumo"/>
+      </family>
+    </segment>
+  </type>
+</psy>
