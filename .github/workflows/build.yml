@@ -117,4 +117,4 @@ jobs:
       - name: System test
         if: github.event_name == 'push'
         run: |
-          php bin/sat-pys-build --format xml --sort key build/result.xml
+          php bin/sat-pys-scraper --format xml --sort key build/result.xml
