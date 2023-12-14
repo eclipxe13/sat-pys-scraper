@@ -46,7 +46,7 @@ el archivo [`README.Docker.md`](Docker.README.md).
 git clone https://github.com/phpcfdi/sat-pys-scraper.git
 
 # construcción de la imagen de Docker
-docker build -t sat-catalogos-populate sat-pys-scraper/
+docker build -t sat-pys-scraper sat-pys-scraper/
 
 # ejecución de la herramienta
 docker run -it --rm sat-pys-scraper --help
@@ -167,7 +167,7 @@ and licensed for use under the MIT License (MIT). Please see [LICENSE][] for mor
 [todo]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/docs/TODO.md
 
 [source]: https://github.com/phpcfdi/sat-pys-scraper
-[php-version]: https://github.com/phpcfdi/sat-catalogos-populate/blob/main/composer.json
+[php-version]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/composer.json
 [release]: https://github.com/phpcfdi/sat-pys-scraper/releases
 [license]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/LICENSE
 [build]: https://github.com/phpcfdi/sat-pys-scraper/actions/workflows/build.yml?query=branch:main
