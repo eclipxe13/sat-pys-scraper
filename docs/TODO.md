@@ -2,6 +2,12 @@
 
 ## Lista de tareas pendientes
 
+### `phcps`
+
+En el flujo de trabajo `build.yml` usando `actions/setup-php-action` la herramienta `phcps` se está instalando usando `squizlabs` en lugar de `PHPCSStandards`.
+Por lo tanto, en lugar de usar la herramienta de la acción, se está usando `phive` para instalarla.
+Cuando se actualice la herramienta `actions/setup-php-action` se debe cambiar a la instalación normal.
+
 ### PHP 8.3
 
 Migrar a PHP 8.3 en cuanto las herramientas (como *PHP_CodeSniffer*) lo permitan.
