@@ -5,7 +5,11 @@
 [![Latest Version][badge-release]][release]
 [![Software License][badge-license]][license]
 [![Build Status][badge-build]][build]
-[![Coverage Status][badge-coverage]][coverage]
+[![Reliability][badge-reliability]][reliability]
+[![Maintainability][badge-maintainability]][maintainability]
+[![Code Coverage][badge-coverage]][coverage]
+[![Violations][badge-violations]][violations]
+[![Total Downloads][badge-downloads]][downloads]
 
 > Herramienta para obtener y generar un listado de las clasificaciones del catálogo de productos y servicios del SAT
 
@@ -166,15 +170,23 @@ and licensed for use under the MIT License (MIT). Please see [LICENSE][] for mor
 [todo]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/docs/TODO.md
 
 [source]: https://github.com/phpcfdi/sat-pys-scraper
-[php-version]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/composer.json
+[php-version]: https://packagist.org/packages/phpcfdi/sat-pys-scraper
 [release]: https://github.com/phpcfdi/sat-pys-scraper/releases
 [license]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/LICENSE
 [build]: https://github.com/phpcfdi/sat-pys-scraper/actions/workflows/build.yml?query=branch:main
-[coverage]: https://scrutinizer-ci.com/g/phpcfdi/sat-pys-scraper/code-structure/main/code-coverage
+[reliability]:https://sonarcloud.io/component_measures?id=phpcfdi_sat-pys-scraper&metric=Reliability
+[maintainability]: https://sonarcloud.io/component_measures?id=phpcfdi_sat-pys-scraper&metric=Maintainability
+[coverage]: https://sonarcloud.io/component_measures?id=phpcfdi_sat-pys-scraper&metric=Coverage
+[violations]: https://sonarcloud.io/project/issues?id=phpcfdi_sat-pys-scraper&resolved=false
+[downloads]: https://packagist.org/packages/phpcfdi/sat-pys-scraper
 
-[badge-source]: https://img.shields.io/badge/source-phpcfdi/sat--pys--scraper-blue?style=flat-square
-[badge-php-version]: https://img.shields.io/packagist/dependency-v/phpcfdi/sat-pys-scraper/php?style=flat-square
-[badge-release]: https://img.shields.io/github/release/phpcfdi/sat-pys-scraper?style=flat-square
-[badge-license]: https://img.shields.io/github/license/phpcfdi/sat-pys-scraper?style=flat-square
-[badge-build]: https://img.shields.io/github/actions/workflow/status/phpcfdi/sat-pys-scraper/build.yml?branch=main&style=flat-square
-[badge-coverage]: https://img.shields.io/scrutinizer/coverage/g/phpcfdi/sat-pys-scraper/main?style=flat-square
+[badge-source]: https://img.shields.io/badge/source-phpcfdi/sat--pys--scraper-blue?logo=github
+[badge-php-version]: https://img.shields.io/packagist/dependency-v/phpcfdi/sat-pys-scraper/php?logo=php
+[badge-release]: https://img.shields.io/github/release/phpcfdi/sat-pys-scraper?logo=git
+[badge-license]: https://img.shields.io/github/license/phpcfdi/sat-pys-scraper?logo=open-source-initiative
+[badge-build]: https://img.shields.io/github/actions/workflow/status/phpcfdi/sat-pys-scraper/build.yml?branch=main&logo=github-actions
+[badge-reliability]: https://sonarcloud.io/api/project_badges/measure?project=phpcfdi_sat-pys-scraper&metric=reliability_rating
+[badge-maintainability]: https://sonarcloud.io/api/project_badges/measure?project=phpcfdi_sat-pys-scraper&metric=sqale_rating
+[badge-coverage]: https://img.shields.io/sonar/coverage/phpcfdi_sat-pys-scraper/main?logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io
+[badge-violations]: https://img.shields.io/sonar/violations/phpcfdi_sat-pys-scraper/main?format=long&logo=sonarcloud&server=https%3A%2F%2Fsonarcloud.io
+[badge-downloads]: https://img.shields.io/packagist/dt/phpcfdi/sat-pys-scraper?logo=packagist
