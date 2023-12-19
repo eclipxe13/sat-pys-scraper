@@ -46,7 +46,7 @@ el archivo [`README.Docker.md`](Docker.README.md).
 git clone https://github.com/phpcfdi/sat-pys-scraper.git
 
 # construcción de la imagen de Docker
-docker build -t sat-catalogos-populate sat-pys-scraper/
+docker build -t sat-pys-scraper sat-pys-scraper/
 
 # ejecución de la herramienta
 docker run -it --rm sat-pys-scraper --help
@@ -131,7 +131,7 @@ Un objeto `Segment` contiene las propiedades `key` y `name`, y además es una co
 Un objeto `Family` contiene las propiedades `key` y `name`, y además es una colección iterable de objetos de tipo `Classification`.
 Un objeto `Classification` solamente contiene las propiedades `key` y `name`.
 
-Todos los objetos de datos implementan `JsonSerializable`, por lo que puedes usar esta característica para exportar a contenido en formato JSON.
+Todos los objetos de datos implementan `JsonSerializable`, por lo que puedes usar esta característica para exportar a formato JSON.
 
 ## Soporte
 
@@ -148,9 +148,9 @@ Esta librería se mantendrá compatible con al menos la versión con
 También utilizamos [Versionado Semántico 2.0.0](docs/SEMVER.md) por lo que puedes usar esta librería
 sin temor a romper tu aplicación.
 
-| Version | PHP | Notes       |
-| ------- | --- | ----------- |
-| 1.0.0   | 8.2 | 2023-12-13  |
+| Version | PHP | Notes      |
+|---------|-----|------------|
+| 1.0.0   | 8.2 | 2023-12-13 |
 
 ## Contribuciones
 
@@ -167,7 +167,7 @@ and licensed for use under the MIT License (MIT). Please see [LICENSE][] for mor
 [todo]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/docs/TODO.md
 
 [source]: https://github.com/phpcfdi/sat-pys-scraper
-[php-version]: https://github.com/phpcfdi/sat-catalogos-populate/blob/main/composer.json
+[php-version]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/composer.json
 [release]: https://github.com/phpcfdi/sat-pys-scraper/releases
 [license]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/LICENSE
 [build]: https://github.com/phpcfdi/sat-pys-scraper/actions/workflows/build.yml?query=branch:main

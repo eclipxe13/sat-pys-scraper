@@ -3,8 +3,8 @@
 
 declare(strict_types=1);
 
-use PhpCfdi\SatPysScraper\App\ScrapToXml;
+use PhpCfdi\SatPysScraper\App\SatPysScraper;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-exit(ScrapToXml::run(...$argv));
+exit(SatPysScraper::run(...$argv));

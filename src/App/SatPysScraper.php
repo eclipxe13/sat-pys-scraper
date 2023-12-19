@@ -10,15 +10,16 @@ use PhpCfdi\SatPysScraper\Data\Types;
 use PhpCfdi\SatPysScraper\Generator;
 use PhpCfdi\SatPysScraper\NullGeneratorTracker;
 use PhpCfdi\SatPysScraper\Scraper;
+use PhpCfdi\SatPysScraper\ScraperInterface;
 use PhpCfdi\SatPysScraper\XmlExporter;
 use Throwable;
 
-final readonly class ScrapToXml
+final readonly class SatPysScraper
 {
     /**
      * @param list<string> $arguments
      */
-    public function __construct(private string $command, private array $arguments, private Scraper $scraper)
+    public function __construct(private string $command, private array $arguments, private ScraperInterface $scraper)
     {
     }
 
@@ -76,16 +77,17 @@ final readonly class ScrapToXml
         $tracker = ($arguments['quiet']) ? new NullGeneratorTracker() : new PrinterGeneratorTracker();
         $types = (new Generator($this->scraper, $tracker))->generate();
 
+        // sort types
         match ($arguments['sort']) {
             'key' => $types->sortByKey(),
             'name' => $types->sortByName(),
             default => throw new Exception('Unrecognized sort argument'),
         };
 
+        // create output
         match ($arguments['format']) {
             'xml' => $this->toXml($arguments['output'], $types),
             'json' => $this->toJson($arguments['output'], $types),
-            // no break
             default => throw new Exception('Unrecognized format argument'),
         };
     }
@@ -102,21 +104,21 @@ final readonly class ScrapToXml
         $format = 'xml';
         $sort = 'key';
 
-        foreach ($arguments as $i => $argument) {
+        $argumentsCount = count($arguments);
+        for ($i = 0; $i < $argumentsCount; $i++) {
+            $argument = $arguments[$i];
             if (in_array($argument, ['--format', '-f'], true)) {
-                $format = $arguments[$i + 1] ?? '';
+                $format = strval($arguments[++$i] ?? '');
                 if (! in_array($format, ['xml', 'json'])) {
                     throw new Exception(sprintf('Invalid format "%s"', $format));
                 }
-                next($arguments);
                 continue;
             }
             if (in_array($argument, ['--sort', '-s'], true)) {
-                $sort = $arguments[$i + 1] ?? '';
-                if (! in_array($format, ['key', 'name'])) {
-                    throw new Exception(sprintf('Invalid sort "%s"', $format));
+                $sort = strval($arguments[++$i] ?? '');
+                if (! in_array($sort, ['key', 'name'])) {
+                    throw new Exception(sprintf('Invalid sort "%s"', $sort));
                 }
-                next($arguments);
                 continue;
             }
             if (in_array($argument, ['--quiet', '-q'], true)) {

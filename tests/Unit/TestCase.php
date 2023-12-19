@@ -6,11 +6,12 @@ namespace PhpCfdi\SatPysScraper\Tests\Unit;
 
 use GuzzleHttp\Client;
 use PhpCfdi\SatPysScraper\Scraper;
+use PhpCfdi\SatPysScraper\ScraperInterface;
 use PhpCfdi\SatPysScraper\Tests\Fakes\PysSimulator;
 
 abstract class TestCase extends \PhpCfdi\SatPysScraper\Tests\TestCase
 {
-    public function createFakeScraper(): Scraper
+    public function createFakeScraper(): ScraperInterface
     {
         $handler = new PysSimulator([
             1 => ['Productos', [
@@ -42,7 +43,7 @@ abstract class TestCase extends \PhpCfdi\SatPysScraper\Tests\TestCase
             2 => ['Servicios', [
                 85 => ['Servicios de salud', [
                     8512 => ['Práctica médica', [
-                        851215 => '', // clase sin nombre!
+                        851215 => '', // ¡clase sin nombre!
                         851216 => 'Servicios médicos de doctores especialistas',
                         851219 => 'Farmacéuticos',
                         851218 => 'Laboratorios médicos',
