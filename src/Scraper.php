@@ -9,7 +9,7 @@ use GuzzleHttp\RequestOptions;
 use LogicException;
 use Symfony\Component\DomCrawler\Crawler;
 
-class Scraper
+final class Scraper implements ScraperInterface
 {
     /** @noinspection HttpUrlsUsage */
     public const PYS_URL = 'http://pys.sat.gob.mx/PyS/catPyS.aspx';

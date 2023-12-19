@@ -7,7 +7,7 @@ namespace PhpCfdi\SatPysScraper;
 readonly class Generator
 {
     public function __construct(
-        private Scraper $scraper,
+        private ScraperInterface $scraper,
         private GeneratorTrackerInterface $tracker = new NullGeneratorTracker(),
     ) {
     }
