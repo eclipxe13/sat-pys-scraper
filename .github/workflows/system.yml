@@ -1,0 +1,46 @@
+name: system
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/**'
+      - 'bin/**'
+  schedule:
+    - cron: '0 16 * * 0' # sunday 16:00
+
+# Actions
+# shivammathur/setup-php@v2 https://github.com/marketplace/actions/setup-php-action
+
+jobs:
+
+  system-tests:
+    name: System test on PHP ${{ matrix.php-versions }}
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        php-versions: ['8.2', '8.3']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: xdebug
+          tools: composer:v2
+        env:
+          fail-fast: true
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install project dependencies
+        run: composer upgrade --no-interaction --no-progress --prefer-dist --no-dev
+      - name: System test with PHP ${{ matrix.php-versions }}
+        run: php bin/sat-pys-scraper --format xml --sort key build/result.xml
