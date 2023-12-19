@@ -10,7 +10,6 @@ on:
 
 # Actions
 # shivammathur/setup-php@v2 https://github.com/marketplace/actions/setup-php-action
-# sudo-bot/action-scrutinizer@latest https://github.com/marketplace/actions/action-scrutinizer
 
 jobs:
 
@@ -87,8 +86,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # required for scrutinizer
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -110,12 +107,6 @@ jobs:
         run: composer upgrade --no-interaction --no-progress --prefer-dist
       - name: Tests (phpunit)
         run: vendor/bin/phpunit --testsuite=complete --testdox --coverage-xml=build/coverage --coverage-clover=build/coverage/clover.xml --log-junit=build/coverage/junit.xml
-      - name: Upload code coverage to scrutinizer
-        if: github.event_name == 'push'
-        uses: sudo-bot/action-scrutinizer@latest
-        with:
-          cli-args: "-vvv --format=php-clover build/coverage/clover.xml"
-        continue-on-error: true
       - name: System test
         if: github.event_name == 'push'
         run: |

@@ -5,7 +5,6 @@
 [![Latest Version][badge-release]][release]
 [![Software License][badge-license]][license]
 [![Build Status][badge-build]][build]
-[![Scrutinizer][badge-quality]][quality]
 [![Coverage Status][badge-coverage]][coverage]
 
 > Herramienta para obtener y generar un listado de las clasificaciones del catálogo de productos y servicios del SAT
@@ -171,7 +170,6 @@ and licensed for use under the MIT License (MIT). Please see [LICENSE][] for mor
 [release]: https://github.com/phpcfdi/sat-pys-scraper/releases
 [license]: https://github.com/phpcfdi/sat-pys-scraper/blob/main/LICENSE
 [build]: https://github.com/phpcfdi/sat-pys-scraper/actions/workflows/build.yml?query=branch:main
-[quality]: https://scrutinizer-ci.com/g/phpcfdi/sat-pys-scraper/
 [coverage]: https://scrutinizer-ci.com/g/phpcfdi/sat-pys-scraper/code-structure/main/code-coverage
 
 [badge-source]: https://img.shields.io/badge/source-phpcfdi/sat--pys--scraper-blue?style=flat-square
@@ -179,5 +177,4 @@ and licensed for use under the MIT License (MIT). Please see [LICENSE][] for mor
 [badge-release]: https://img.shields.io/github/release/phpcfdi/sat-pys-scraper?style=flat-square
 [badge-license]: https://img.shields.io/github/license/phpcfdi/sat-pys-scraper?style=flat-square
 [badge-build]: https://img.shields.io/github/actions/workflow/status/phpcfdi/sat-pys-scraper/build.yml?branch=main&style=flat-square
-[badge-quality]: https://img.shields.io/scrutinizer/g/phpcfdi/sat-pys-scraper/main?style=flat-square
 [badge-coverage]: https://img.shields.io/scrutinizer/coverage/g/phpcfdi/sat-pys-scraper/main?style=flat-square
