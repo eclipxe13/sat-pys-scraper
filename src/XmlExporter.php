@@ -20,7 +20,7 @@ final class XmlExporter
         $document = new DOMDocument();
         $document->formatOutput = true;
         /** @noinspection PhpUnhandledExceptionInspection */
-        $root = $document->createElement('psy');
+        $root = $document->createElement('pys');
         $document->appendChild($root);
 
         foreach ($types as $type) {
