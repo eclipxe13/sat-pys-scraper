@@ -43,19 +43,23 @@ final readonly class SatPysScraper
 
             Sintaxis:
                 $command help|-h|--help
-                $command destination-file [--quiet|-q] [--format|-f FORMAT]
+                $command [--quiet|-q] [--json|-j JSON_FILE] [--xml|-x XML_FILE]
 
             Argumentos:
-                destination-file
-                    Nombre del archivo XML para almacenar el resultado.
-                    Si se usa "-" o se omite entonces el resultado se manda a la salida estándar
-                    y se activa el modo de operación silencioso.
-                --format|-f FORMAT
-                    Establece el formato de salida, default: xml, por el momento "xml" o "json".
+                --xml|-x XML_FILE
+                    Establece el nombre de archivo, o "-" para la salida estándar, donde se envían
+                    los datos generados en formato XML.
+                --json|-j JSON_FILE
+                    Establece el nombre de archivo, o "-" para la salida estándar, donde se envían
+                    los datos generados en formato JSON.
                 --sort|-s SORT
                     Establece el orden de elementos, default: key, se puede usar "key" o "name".
                 --quiet|-q
                     Modo de operación silencioso.
+
+            Notas:
+                Debe especificar al menos un argumento "--xml" o "--json", o ambos.
+                No se puede especificar "-" como salida de "--xml" y "--json" al mismo tiempo.
 
             Acerca de:
                 Este script pertenece al proyecto https://github.com/phpcfdi/sat-pys-scraper
@@ -84,34 +88,35 @@ final readonly class SatPysScraper
             default => throw new Exception('Unrecognized sort argument'),
         };
 
-        // create output
-        match ($arguments['format']) {
-            'xml' => $this->toXml($arguments['output'], $types),
-            'json' => $this->toJson($arguments['output'], $types),
-            default => throw new Exception('Unrecognized format argument'),
-        };
+        if ('' !== $arguments['xml']) {
+            $this->toXml($arguments['xml'], $types);
+        }
+        if ('' !== $arguments['json']) {
+            $this->toJson($arguments['json'], $types);
+        }
     }
 
     /**
-     * @return array{output: string, quiet: bool, format: string, sort: string}
+     * @return array{xml: string, json: string, quiet: bool, sort: string}
      * @throws Exception
      */
     public function processArguments(string ...$arguments): array
     {
         $arguments = array_values($arguments);
-        $output = '';
+        $xml = '';
+        $json = '';
         $quiet = false;
-        $format = 'xml';
         $sort = 'key';
 
         $argumentsCount = count($arguments);
         for ($i = 0; $i < $argumentsCount; $i++) {
             $argument = $arguments[$i];
-            if (in_array($argument, ['--format', '-f'], true)) {
-                $format = strval($arguments[++$i] ?? '');
-                if (! in_array($format, ['xml', 'json'])) {
-                    throw new Exception(sprintf('Invalid format "%s"', $format));
-                }
+            if (in_array($argument, ['--xml', '-x'], true)) {
+                $xml = strval($arguments[++$i] ?? '');
+                continue;
+            }
+            if (in_array($argument, ['--json', '-j'], true)) {
+                $json = strval($arguments[++$i] ?? '');
                 continue;
             }
             if (in_array($argument, ['--sort', '-s'], true)) {
@@ -125,26 +130,29 @@ final readonly class SatPysScraper
                 $quiet = true;
                 continue;
             }
-            if ('' === $output) {
-                $output = $argument;
-                continue;
-            }
 
             throw new Exception(sprintf('Invalid argument "%s"', $argument));
         }
 
-        if ('' === $output) {
-            throw new Exception('Missing argument destination-file');
+        if ('' === $xml && '' === $json) {
+            throw new Exception('Did not specify --xml or --json arguments');
         }
-        if ('-' === $output) {
-            $output = 'php://stdout';
+        if ('-' === $xml && '-' === $json) {
+            throw new Exception('Cannot send --xml and --json result to standard output at the same time');
+        }
+        if ('-' === $xml) {
+            $xml = 'php://stdout';
+            $quiet = true;
+        }
+        if ('-' === $json) {
+            $json = 'php://stdout';
             $quiet = true;
         }
 
         return [
-            'output' => $output,
+            'xml' => $xml,
+            'json' => $json,
             'quiet' => $quiet,
-            'format' => $format,
             'sort' => $sort,
         ];
     }

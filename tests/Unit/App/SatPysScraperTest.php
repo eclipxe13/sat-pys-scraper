@@ -7,60 +7,79 @@ namespace PhpCfdi\SatPysScraper\Tests\Unit\App;
 use PhpCfdi\SatPysScraper\App\SatPysScraper;
 use PhpCfdi\SatPysScraper\ScraperInterface;
 use PhpCfdi\SatPysScraper\Tests\Unit\TestCase;
+use PHPUnit\Framework\Attributes\TestWith;
 
 final class SatPysScraperTest extends TestCase
 {
     public function testProcessArgumentsMinimal(): void
     {
-        $arguments = ['output-file'];
+        $arguments = ['--xml', '-'];
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
         $result = $script->processArguments(...$arguments);
 
         $this->assertSame([
-            'output' => 'output-file',
-            'quiet' => false,
-            'format' => 'xml',
+            'xml' => 'php://stdout',
+            'json' => '',
+            'quiet' => true,
             'sort' => 'key',
         ], $result);
     }
 
-    public function testProcessOutputToStandard(): void
+    public function testProcessXmlOutputToStandard(): void
     {
-        $arguments = ['-'];
+        $arguments = ['--xml', '-'];
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
         $result = $script->processArguments(...$arguments);
 
         $this->assertSame([
-            'output' => 'php://stdout',
+            'xml' => 'php://stdout',
+            'json' => '',
             'quiet' => true,
-            'format' => 'xml',
             'sort' => 'key',
         ], $result);
     }
 
-    public function testProcessArgumentsSetAll(): void
+    public function testProcessXmlArgumentsSetAll(): void
     {
-        $arguments = ['--format', 'json', '--sort', 'name', '--quiet', 'output-file'];
+        $arguments = ['--xml', 'result.xml', '--json', 'result.json', '--sort', 'name', '--quiet'];
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
         $result = $script->processArguments(...$arguments);
 
         $this->assertSame([
-            'output' => 'output-file',
+            'xml' => 'result.xml',
+            'json' => 'result.json',
             'quiet' => true,
-            'format' => 'json',
             'sort' => 'name',
         ], $result);
     }
 
+    public function testProcessWithoutArguments(): void
+    {
+        $arguments = [];
+        $scraper = $this->createMock(ScraperInterface::class);
+        $script = new SatPysScraper('command', $arguments, $scraper);
+        $this->expectExceptionMessage('Did not specify --xml or --json arguments');
+        $script->processArguments(...$arguments);
+    }
+
+    public function testProcessWithXmlAndJsonOutputToStdout(): void
+    {
+        $arguments = ['-x', '-', '-j', '-'];
+        $scraper = $this->createMock(ScraperInterface::class);
+        $script = new SatPysScraper('command', $arguments, $scraper);
+        $this->expectExceptionMessage('Cannot send --xml and --json result to standard output at the same time');
+        $script->processArguments(...$arguments);
+    }
+
     public function testProcessArgumentsWithExtra(): void
     {
-        $arguments = ['output-file', 'extra-argument'];
+        $arguments = ['extra-argument'];
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
@@ -68,19 +87,9 @@ final class SatPysScraperTest extends TestCase
         $script->processArguments(...$arguments);
     }
 
-    public function testProcessArgumentsWithInvalidFormat(): void
-    {
-        $arguments = ['output-file', '--format', 'foo'];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $this->expectExceptionMessage('Invalid format "foo"');
-        $script->processArguments(...$arguments);
-    }
-
     public function testProcessArgumentsWithInvalidSort(): void
     {
-        $arguments = ['output-file', '--sort', 'foo'];
+        $arguments = ['--sort', 'foo'];
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
@@ -88,13 +97,15 @@ final class SatPysScraperTest extends TestCase
         $script->processArguments(...$arguments);
     }
 
-    public function testProcessArgumentsWithoutOutput(): void
+    #[TestWith(['--xml'])]
+    #[TestWith(['--json'])]
+    public function testProcessArgumentsWithoutOutput(string $format): void
     {
-        $arguments = [];
+        $arguments = [$format, ''];
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
-        $this->expectExceptionMessage('Missing argument destination-file');
+        $this->expectExceptionMessage('Did not specify --xml or --json arguments');
         $script->processArguments(...$arguments);
     }
 }

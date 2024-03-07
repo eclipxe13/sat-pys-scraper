@@ -23,14 +23,14 @@ docker run -it --rm --user="$(id -u):$(id -g)" \
 
 # generar en un volumen
 docker run -it --rm --user="$(id -u):$(id -g)" --volume="${PWD}:/local" \
-  sat-pys-scraper /local/output.xml
+  sat-pys-scraper --xml /local/output.xml
 
 
 # pipe output to file (xml, sorted by key)
 docker run -it --rm --user="$(id -u):$(id -g)" \
-  sat-pys-scraper - > output.xml
+  sat-pys-scraper --xml - > output.xml
 
 # pipe output to file (json, sorted by name)
 docker run -it --rm --user="$(id -u):$(id -g)" \
-  sat-pys-scraper - --format json --sort name > output.xml
+  sat-pys-scraper --json - --sort name > output.json
 ```

@@ -62,19 +62,23 @@ sat-pys-scraper - Crea un archivo con la clasificación de productos y servicios
 
 Sintaxis:
     sat-pys-scraper help|-h|--help
-    sat-pys-scraper destination-file [--quiet|-q] [--format|-f FORMAT]
+    sat-pys-scraper [--quiet|-q] [--json|-j JSON_FILE] [--xml|-x XML_FILE]
 
 Argumentos:
-    destination-file
-        Nombre del archivo XML para almacenar el resultado.
-        Si se usa "-" o se omite entonces el resultado se manda a la salida estándar
-        y se activa el modo de operación silencioso.
-    --format|-f FORMAT
-        Establece el formato de salida, default: xml, por el momento "xml" o "json".
+    --xml|-x XML_FILE
+        Establece el nombre de archivo, o "-" para la salida estándar, donde se envían
+        los datos generados en formato XML.
+    --json|-j JSON_FILE
+        Establece el nombre de archivo, o "-" para la salida estándar, donde se envían
+        los datos generados en formato JSON.
     --sort|-s SORT
         Establece el orden de elementos, default: key, se puede usar "key" o "name".
     --quiet|-q
         Modo de operación silencioso.
+
+Notas:
+    Debe especificar al menos un argumento "--xml" o "--json", o ambos.
+    No se puede especificar "-" como salida de "--xml" y "--json" al mismo tiempo.
 
 Acerca de:
     Este script pertenece al proyecto https://github.com/phpcfdi/sat-pys-scraper
@@ -151,9 +155,10 @@ Esta librería se mantendrá compatible con al menos la versión con
 También utilizamos [Versionado Semántico 2.0.0](docs/SEMVER.md) por lo que puedes usar esta librería
 sin temor a romper tu aplicación.
 
-| Version | PHP | Notes      |
-|---------|-----|------------|
-| 1.0.0   | 8.2 | 2023-12-13 |
+| Version | PHP      | Notes      |
+|---------|----------|------------|
+| 1.0.0   | 8.2, 8.3 | 2023-12-13 |
+| 2.0.0   | 8.2, 8.3 | 2024-03-07 |
 
 ## Contribuciones
 
