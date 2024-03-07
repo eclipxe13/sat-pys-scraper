@@ -43,4 +43,4 @@ jobs:
       - name: Install project dependencies
         run: composer upgrade --no-interaction --no-progress --prefer-dist --no-dev
       - name: System test with PHP ${{ matrix.php-versions }}
-        run: php bin/sat-pys-scraper --format xml --sort key build/result.xml
+        run: php bin/sat-pys-scraper --json build/result.json --xml build/result.xml --sort key
