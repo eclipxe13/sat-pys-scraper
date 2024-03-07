@@ -11,6 +11,16 @@ versión, aunque sí su incorporación en la rama principal de trabajo. Generalm
 
 ## Listado de cambios
 
+### Versión 2.0.0 2023-03-07
+
+- Se corrige el nodo principal, el nombre correcto es `<pys>`.
+- Se cambia el comando de ejecución `bin/sat-pys-scraper` para exportar a JSON y XML al mismo tiempo.
+
+Otros cambios:
+
+- Se utilizan las acciones de GitHub versión 4. 
+- Se actualizan las herramientas de desarrollo.
+
 ### Versión 1.0.0 2023-12-13
 
 - Versión inicial.
