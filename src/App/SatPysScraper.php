@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PhpCfdi\SatPysScraper\App;
 
-use Exception;
 use GuzzleHttp\Client;
 use PhpCfdi\SatPysScraper\Data\Types;
 use PhpCfdi\SatPysScraper\Generator;
@@ -23,14 +22,20 @@ final readonly class SatPysScraper
     {
     }
 
-    public static function run(string $command, string ...$arguments): int
-    {
-        $app = new self($command, array_values($arguments), new Scraper(new Client()));
+    /** @param string[] $argv */
+    public static function run(
+        array $argv,
+        ScraperInterface $scraper = new Scraper(new Client()),
+        string $stdErrFile = 'php://stderr'
+    ): int {
+        $command = (string) array_shift($argv);
+        $argv = array_values($argv);
+        $app = new self($command, $argv, $scraper);
         try {
             $app->execute();
             return 0;
         } catch (Throwable $exception) {
-            file_put_contents('php://stderr', 'ERROR: ' . $exception->getMessage() . PHP_EOL, FILE_APPEND);
+            file_put_contents($stdErrFile, 'ERROR: ' . $exception->getMessage() . PHP_EOL, FILE_APPEND);
             return 1;
         }
     }
@@ -69,7 +74,7 @@ final readonly class SatPysScraper
             HELP;
     }
 
-    /** @throws Exception */
+    /** @throws ArgumentException */
     public function execute(): void
     {
         if ([] !== array_intersect($this->arguments, ['help', '-h', '--help'])) {
@@ -85,7 +90,7 @@ final readonly class SatPysScraper
         match ($arguments['sort']) {
             'key' => $types->sortByKey(),
             'name' => $types->sortByName(),
-            default => throw new Exception('Unrecognized sort argument'),
+            default => throw new ArgumentException('Unrecognized sort argument'),
         };
 
         if ('' !== $arguments['xml']) {
@@ -98,7 +103,7 @@ final readonly class SatPysScraper
 
     /**
      * @return array{xml: string, json: string, quiet: bool, sort: string}
-     * @throws Exception
+     * @throws ArgumentException
      */
     public function processArguments(string ...$arguments): array
     {
@@ -122,7 +127,7 @@ final readonly class SatPysScraper
             if (in_array($argument, ['--sort', '-s'], true)) {
                 $sort = strval($arguments[++$i] ?? '');
                 if (! in_array($sort, ['key', 'name'])) {
-                    throw new Exception(sprintf('Invalid sort "%s"', $sort));
+                    throw new ArgumentException(sprintf('Invalid sort "%s"', $sort));
                 }
                 continue;
             }
@@ -131,14 +136,14 @@ final readonly class SatPysScraper
                 continue;
             }
 
-            throw new Exception(sprintf('Invalid argument "%s"', $argument));
+            throw new ArgumentException(sprintf('Invalid argument "%s"', $argument));
         }
 
         if ('' === $xml && '' === $json) {
-            throw new Exception('Did not specify --xml or --json arguments');
+            throw new ArgumentException('Did not specify --xml or --json arguments');
         }
         if ('-' === $xml && '-' === $json) {
-            throw new Exception('Cannot send --xml and --json result to standard output at the same time');
+            throw new ArgumentException('Cannot send --xml and --json result to standard output at the same time');
         }
         if ('-' === $xml) {
             $xml = 'php://stdout';

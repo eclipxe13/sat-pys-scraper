@@ -7,4 +7,4 @@ use PhpCfdi\SatPysScraper\App\SatPysScraper;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-exit(SatPysScraper::run(...$argv));
+exit(SatPysScraper::run($argv));
