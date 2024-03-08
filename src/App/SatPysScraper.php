@@ -22,14 +22,20 @@ final readonly class SatPysScraper
     {
     }
 
-    public static function run(string $command, string ...$arguments): int
-    {
-        $app = new self($command, array_values($arguments), new Scraper(new Client()));
+    /** @param string[] $argv */
+    public static function run(
+        array $argv,
+        ScraperInterface $scraper = new Scraper(new Client()),
+        string $stdErrFile = 'php://stderr'
+    ): int {
+        $command = (string) array_shift($argv);
+        $argv = array_values($argv);
+        $app = new self($command, $argv, $scraper);
         try {
             $app->execute();
             return 0;
         } catch (Throwable $exception) {
-            file_put_contents('php://stderr', 'ERROR: ' . $exception->getMessage() . PHP_EOL, FILE_APPEND);
+            file_put_contents($stdErrFile, 'ERROR: ' . $exception->getMessage() . PHP_EOL, FILE_APPEND);
             return 1;
         }
     }

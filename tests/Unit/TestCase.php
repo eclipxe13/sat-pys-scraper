@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PhpCfdi\SatPysScraper\Tests\Unit;
 
 use GuzzleHttp\Client;
+use LogicException;
 use PhpCfdi\SatPysScraper\Scraper;
 use PhpCfdi\SatPysScraper\ScraperInterface;
 use PhpCfdi\SatPysScraper\Tests\Fakes\PysSimulator;
@@ -66,5 +67,14 @@ abstract class TestCase extends \PhpCfdi\SatPysScraper\Tests\TestCase
         ]);
         $client = new Client(['handler' => $handler]);
         return new Scraper($client);
+    }
+
+    public function createTemporaryFilename(): string
+    {
+        $temporaryFile = (string) tempnam(directory: '', prefix: 'testing-');
+        if ('' === $temporaryFile) {
+            throw new LogicException('Unable to create a temporary file');
+        }
+        return $temporaryFile;
     }
 }
