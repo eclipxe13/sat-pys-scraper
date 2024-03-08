@@ -64,6 +64,8 @@ final class SatPysScraperTest extends TestCase
         $arguments = [];
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
+
+        $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage('Did not specify --xml or --json arguments');
         $script->processArguments(...$arguments);
     }
@@ -73,6 +75,8 @@ final class SatPysScraperTest extends TestCase
         $arguments = ['-x', '-', '-j', '-'];
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
+
+        $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage('Cannot send --xml and --json result to standard output at the same time');
         $script->processArguments(...$arguments);
     }
@@ -83,6 +87,7 @@ final class SatPysScraperTest extends TestCase
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
+        $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage('Invalid argument "extra-argument"');
         $script->processArguments(...$arguments);
     }
@@ -93,6 +98,7 @@ final class SatPysScraperTest extends TestCase
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
+        $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage('Invalid sort "foo"');
         $script->processArguments(...$arguments);
     }
@@ -105,6 +111,7 @@ final class SatPysScraperTest extends TestCase
         $scraper = $this->createMock(ScraperInterface::class);
         $script = new SatPysScraper('command', $arguments, $scraper);
 
+        $this->expectException(ArgumentException::class);
         $this->expectExceptionMessage('Did not specify --xml or --json arguments');
         $script->processArguments(...$arguments);
     }
