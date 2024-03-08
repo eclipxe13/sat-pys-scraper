@@ -113,30 +113,22 @@ final readonly class SatPysScraper
         $quiet = false;
         $sort = 'key';
 
-        $argumentsCount = count($arguments);
-        for ($i = 0; $i < $argumentsCount; $i++) {
-            $argument = $arguments[$i];
+        while ([] !== $arguments) {
+            $argument = (string) array_shift($arguments);
             if (in_array($argument, ['--xml', '-x'], true)) {
-                $xml = strval($arguments[++$i] ?? '');
-                continue;
-            }
-            if (in_array($argument, ['--json', '-j'], true)) {
-                $json = strval($arguments[++$i] ?? '');
-                continue;
-            }
-            if (in_array($argument, ['--sort', '-s'], true)) {
-                $sort = strval($arguments[++$i] ?? '');
+                $xml = (string) array_shift($arguments);
+            } elseif (in_array($argument, ['--json', '-j'], true)) {
+                $json = (string) array_shift($arguments);
+            } elseif (in_array($argument, ['--sort', '-s'], true)) {
+                $sort = (string) array_shift($arguments);
                 if (! in_array($sort, ['key', 'name'])) {
                     throw new ArgumentException(sprintf('Invalid sort "%s"', $sort));
                 }
-                continue;
-            }
-            if (in_array($argument, ['--quiet', '-q'], true)) {
+            } elseif (in_array($argument, ['--quiet', '-q'], true)) {
                 $quiet = true;
-                continue;
+            } else {
+                throw new ArgumentException(sprintf('Invalid argument "%s"', $argument));
             }
-
-            throw new ArgumentException(sprintf('Invalid argument "%s"', $argument));
         }
 
         if ('' === $xml && '' === $json) {
