@@ -11,6 +11,10 @@ versión, aunque sí su incorporación en la rama principal de trabajo. Generalm
 
 ## Listado de cambios
 
+### Versión 3.0.0 2023-03-07
+
+- Se cambia el método `SatPysScraper::run()` para una mejor inyección de dependencias y capacidad de pruebas.
+
 ### Versión 2.0.0 2023-03-07
 
 - Se corrige el nodo principal, el nombre correcto es `<pys>`.
