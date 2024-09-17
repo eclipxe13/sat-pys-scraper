@@ -11,13 +11,13 @@ versión, aunque sí su incorporación en la rama principal de trabajo. Generalm
 
 ## Listado de cambios
 
-### Versión 3.0.0 2023-03-07
+### Versión 3.0.0 2024-03-07
 
 - Se cambia el método `SatPysScraper::run()` para una mejor inyección de dependencias y capacidad de pruebas.
 - Se introduce una excepción dedicada para los errores de procesamiento de argumentos.
 - Se cambia la forma de procesar los argumentos para usar `array_shift`.
 
-### Versión 2.0.0 2023-03-07
+### Versión 2.0.0 2024-03-07
 
 - Se corrige el nodo principal, el nombre correcto es `<pys>`.
 - Se cambia el comando de ejecución `bin/sat-pys-scraper` para exportar a JSON y XML al mismo tiempo.
