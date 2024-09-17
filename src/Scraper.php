@@ -14,7 +14,7 @@ final class Scraper implements ScraperInterface
     /** @noinspection HttpUrlsUsage */
     public const PYS_URL = 'http://pys.sat.gob.mx/PyS/catPyS.aspx';
 
-    private Crawler|null $crawler;
+    private Crawler|null $crawler = null;
 
     public function __construct(private readonly ClientInterface $client)
     {
