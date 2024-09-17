@@ -76,18 +76,18 @@ jobs:
         run: phpstan analyse --no-progress --verbose
 
   tests:
-    name: Tests on PHP ${{ matrix.php-versions }}
+    name: Tests on PHP ${{ matrix.php-version }}
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        php-versions: ['8.2', '8.3']
+        php-version: ['8.2', '8.3']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: ${{ matrix.php-version }}
           coverage: xdebug
           tools: composer:v2
         env:
