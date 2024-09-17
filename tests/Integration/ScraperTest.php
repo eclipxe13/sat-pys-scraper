@@ -5,14 +5,34 @@ declare(strict_types=1);
 namespace PhpCfdi\SatPysScraper\Tests\Integration;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use PhpCfdi\SatPysScraper\Scraper;
+use PhpCfdi\SatPysScraper\ScraperInterface;
 use PhpCfdi\SatPysScraper\Tests\TestCase;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class ScraperTest extends TestCase
 {
+    private const MAX_RETRIES = 5;
+
+    private function createScraper(): ScraperInterface
+    {
+        $decider = fn (int $retries, RequestInterface $request, ResponseInterface $response = null): bool
+            => $retries < self::MAX_RETRIES && null !== $response && $response->getStatusCode() >= 500;
+        $delay = fn (int $retries): int => 1000 * ($retries + 1);
+
+        $stack = HandlerStack::create();
+        $stack->push(Middleware::retry($decider, $delay));
+        $client = new Client(['handler' => $stack]);
+
+        return new Scraper($client);
+    }
+
     public function testObtainSequence(): void
     {
-        $scraper = new Scraper(new Client());
+        $scraper = $this->createScraper();
 
         $types = $scraper->obtainTypes();
         $expectedTypeId = 1;
