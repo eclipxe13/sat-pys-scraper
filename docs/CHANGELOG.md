@@ -11,6 +11,21 @@ versión, aunque sí su incorporación en la rama principal de trabajo. Generalm
 
 ## Listado de cambios
 
+### Versión 3.0.1 2024-09-17
+
+Se modifica el script de ejecución y la prueba funcional para poder reintentar en caso de que el 
+servidor del SAT devuelva un estado HTTP 500. Esto sucede frecuentemente desde hace un par de meses.
+
+Se cambia la construcción de imagen de docker, ahora depende de `php:8.3-cli-alpine`.
+
+Se actualiza el archivo de licencia a 2024.
+
+Se hacen otros cambios en el entorno de desarrollo:
+
+- Se prueba el correcto orden para llamar a los métodos para obtener datos.
+- Se utiliza la variable `php-version` en singular para las matrices de pruebas.
+- Se actualizan las herramientas de desarrollo.
+
 ### Versión 3.0.0 2024-03-07
 
 - Se cambia el método `SatPysScraper::run()` para una mejor inyección de dependencias y capacidad de pruebas.
