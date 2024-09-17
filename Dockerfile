@@ -1,41 +1,25 @@
-FROM debian:bookworm
+FROM php:8.3-cli-alpine
 
-COPY . /opt/sat-pys-scraper/
+COPY . /opt/sat-pys-scraper
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+# install dependencies for php modules
 RUN set -e \
-    && export DEBIAN_FRONTEND=noninteractive \
-    # Update debian base system
-    && apt-get update -y \
-    && apt-get dist-upgrade -y \
-    # Install repository PHP from Ondřej Surý
-    && apt-get install -y lsb-release ca-certificates curl \
-    && curl --no-progress-meter https://packages.sury.org/php/apt.gpg --output /etc/apt/trusted.gpg.d/php.gpg \
-    && echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list \
-    && apt-get update -y \
-    && apt-get dist-upgrade -y \
-    # Install required packages
-    && apt-get install -y \
-        unzip git \
-        php-cli php-curl php-zip php-xml \
-    # Clean APT
-    && rm -rf /var/lib/apt/lists/*
+    && apk add git libzip-dev \
+    && docker-php-ext-install zip
 
+# set up php
 RUN set -e \
-    # Set up PHP
-    && find /etc/php/ -type f -name "*.ini" -exec sed -i 's/^variables_order.*/variables_order=EGPCS/' "{}" \; \
+    && mv /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
+    && sed -i 's/^variables_order.*/variables_order=EGPCS/' /usr/local/etc/php/php.ini \
     && php -i
 
+# build project
 RUN set -e \
-    # Install composer
-    && curl --progress-bar https://getcomposer.org/download/latest-stable/composer.phar --output /usr/local/bin/composer \
-    && chmod +x /usr/local/bin/composer \
-    && export COMPOSER_ALLOW_SUPERUSER=1 \
-    && (composer diagnose --no-interaction || true)
-
-RUN set -e \
+    && rm -r -f /opt/sat-pys-scraper/composer.lock /opt/sat-pys-scraper/vendor \
     && composer update --working-dir=/opt/sat-pys-scraper --no-dev --prefer-dist --optimize-autoloader --no-interaction \
     && rm -rf "$(composer config cache-dir --global)" "$(composer config data-dir --global)" "$(composer config home --global)"
 
 ENV TZ="America/Mexico_City"
 
-ENTRYPOINT ["/usr/bin/php", "/opt/sat-pys-scraper/bin/sat-pys-scraper"]
+ENTRYPOINT ["/usr/local/bin/php", "/opt/sat-pys-scraper/bin/sat-pys-scraper"]

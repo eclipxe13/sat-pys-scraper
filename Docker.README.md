@@ -21,10 +21,9 @@ The project installed on `/opt/sat-pys-scraper/` and the entry point is the comm
 docker run -it --rm --user="$(id -u):$(id -g)" \
   sat-pys-scraper --help
 
-# generar en un volumen
+# create output using volume
 docker run -it --rm --user="$(id -u):$(id -g)" --volume="${PWD}:/local" \
   sat-pys-scraper --xml /local/output.xml
-
 
 # pipe output to file (xml, sorted by key)
 docker run -it --rm --user="$(id -u):$(id -g)" \
