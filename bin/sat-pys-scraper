@@ -3,26 +3,8 @@
 
 declare(strict_types=1);
 
-use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
 use PhpCfdi\SatPysScraper\App\SatPysScraper;
-use PhpCfdi\SatPysScraper\Scraper;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$scraperWithRetry = (function () {
-    $decider = fn (int $retries, RequestInterface $request, ResponseInterface $response = null): bool
-        => $retries < 5 && null !== $response && $response->getStatusCode() >= 500;
-    $delay = fn (int $retries): int => 1000 * ($retries + 1);
-
-    $stack = HandlerStack::create();
-    $stack->push(Middleware::retry($decider, $delay));
-    $client = new Client(['handler' => $stack]);
-
-    return new Scraper($client);
-})();
-
-exit(SatPysScraper::run($argv, $scraperWithRetry));
+exit(SatPysScraper::run($argv));
