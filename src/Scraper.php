@@ -20,14 +20,12 @@ final class Scraper implements ScraperInterface
     {
     }
 
-    /** @return array<int|string, string> */
     public function obtainTypes(): array
     {
         $crawler = $this->sendGet();
         return $this->extractSelectValues($crawler, 'cmbTipo');
     }
 
-    /** @return array<int|string, string> */
     public function obtainSegments(int|string $type): array
     {
         $inputs = [
@@ -39,7 +37,6 @@ final class Scraper implements ScraperInterface
         return $this->extractSelectValues($crawler, 'cmbSegmento');
     }
 
-    /** @return array<int|string, string> */
     public function obtainFamilies(int|string $type, int|string $segment): array
     {
         $inputs = [
@@ -52,7 +49,6 @@ final class Scraper implements ScraperInterface
         return $this->extractSelectValues($crawler, 'cmbFamilia');
     }
 
-    /** @return array<int|string, string> */
     public function obtainClasses(int|string $type, int|string $segment, int|string $family): array
     {
         $inputs = [
