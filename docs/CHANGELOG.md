@@ -11,7 +11,13 @@ versión, aunque sí su incorporación en la rama principal de trabajo. Generalm
 
 ## Listado de cambios
 
-### Versión 3.0.1 2024-09-17
+### Versión 3.0.1 2024-10-15
+
+La aplicación del SAT devuelve un error 500 frecuentemente (1 de cada 3 veces) desde 2024-07-15.
+Este error parece estar relacionado con la distribución de cargas por parte del SAT, así que
+reintentar la llamada HTTP sobre la misma conexión no soluciona el problema y hay que crear
+un nuevo cliente HTTP. Para intentar solventarlo, se modifica la librería para tirar
+excepciones con errores HTTP e intentar solventar el error.
 
 Se cambia la construcción de imagen de docker, ahora depende de `php:8.3-cli-alpine`.
 
@@ -19,6 +25,7 @@ Se actualiza el archivo de licencia a 2024.
 
 Se hacen otros cambios en el entorno de desarrollo:
 
+- Se modifica la prueba funcional para poder hacer hasta 5 reintentos reconstruyendo el cliente http.
 - Se prueba el correcto orden para llamar a los métodos para obtener datos.
 - Se utiliza la variable `php-version` en singular para las matrices de pruebas.
 - Se actualizan las herramientas de desarrollo.
