@@ -1,167 +1,29 @@
 <?php
 
+/** @noinspection PhpUnhandledExceptionInspection */
+
 declare(strict_types=1);
 
 namespace PhpCfdi\SatPysScraper\Tests\Unit\App;
 
-use PhpCfdi\SatPysScraper\App\ArgumentException;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Psr7\Response;
 use PhpCfdi\SatPysScraper\App\SatPysScraper;
-use PhpCfdi\SatPysScraper\ScraperInterface;
 use PhpCfdi\SatPysScraper\Tests\Unit\TestCase;
 use PHPUnit\Framework\Attributes\TestWith;
 
 final class SatPysScraperTest extends TestCase
 {
-    public function testProcessXmlOutputToStandard(): void
-    {
-        $arguments = ['--xml', '-'];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $result = $script->processArguments(...$arguments);
-
-        $this->assertSame([
-            'xml' => 'php://stdout',
-            'json' => '',
-            'quiet' => true,
-            'sort' => 'key',
-        ], $result);
-    }
-
-    public function testProcessXmlOutputToFile(): void
-    {
-        $outputFile = '/tmp/result.xml';
-        $arguments = ['-x', $outputFile];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $result = $script->processArguments(...$arguments);
-
-        $this->assertSame([
-            'xml' => $outputFile,
-            'json' => '',
-            'quiet' => false,
-            'sort' => 'key',
-        ], $result);
-    }
-
-    public function testProcessJsonOutputToFile(): void
-    {
-        $outputFile = '/tmp/result.xml';
-        $arguments = ['-j', $outputFile];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $result = $script->processArguments(...$arguments);
-
-        $this->assertSame([
-            'xml' => '',
-            'json' => $outputFile,
-            'quiet' => false,
-            'sort' => 'key',
-        ], $result);
-    }
-
-    public function testProcessJsonOutputToStandard(): void
-    {
-        $arguments = ['--json', '-'];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $result = $script->processArguments(...$arguments);
-
-        $this->assertSame([
-            'xml' => '',
-            'json' => 'php://stdout',
-            'quiet' => true,
-            'sort' => 'key',
-        ], $result);
-    }
-
-    public function testProcessXmlArgumentsSetAll(): void
-    {
-        $arguments = ['--xml', 'result.xml', '--json', 'result.json', '--sort', 'name', '--quiet'];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $result = $script->processArguments(...$arguments);
-
-        $this->assertSame([
-            'xml' => 'result.xml',
-            'json' => 'result.json',
-            'quiet' => true,
-            'sort' => 'name',
-        ], $result);
-    }
-
-    public function testProcessWithoutArguments(): void
-    {
-        $arguments = [];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $this->expectException(ArgumentException::class);
-        $this->expectExceptionMessage('Did not specify --xml or --json arguments');
-        $script->processArguments(...$arguments);
-    }
-
-    public function testProcessWithXmlAndJsonOutputToStdout(): void
-    {
-        $arguments = ['-x', '-', '-j', '-'];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $this->expectException(ArgumentException::class);
-        $this->expectExceptionMessage('Cannot send --xml and --json result to standard output at the same time');
-        $script->processArguments(...$arguments);
-    }
-
-    public function testProcessArgumentsWithExtra(): void
-    {
-        $arguments = ['extra-argument'];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $this->expectException(ArgumentException::class);
-        $this->expectExceptionMessage('Invalid argument "extra-argument"');
-        $script->processArguments(...$arguments);
-    }
-
-    public function testProcessArgumentsWithInvalidSort(): void
-    {
-        $arguments = ['--sort', 'foo'];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $this->expectException(ArgumentException::class);
-        $this->expectExceptionMessage('Invalid sort "foo"');
-        $script->processArguments(...$arguments);
-    }
-
-    #[TestWith(['--xml'])]
-    #[TestWith(['--json'])]
-    public function testProcessArgumentsWithoutOutput(string $format): void
-    {
-        $arguments = [$format, ''];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
-
-        $this->expectException(ArgumentException::class);
-        $this->expectExceptionMessage('Did not specify --xml or --json arguments');
-        $script->processArguments(...$arguments);
-    }
-
     #[TestWith(['--help'])]
     #[TestWith(['-h'])]
     #[TestWith(['help'])]
     public function testHelp(string $helpArgument): void
     {
-        $arguments = ['--first', $helpArgument, 'last'];
-        $scraper = $this->createMock(ScraperInterface::class);
-        $script = new SatPysScraper('command', $arguments, $scraper);
+        $arguments = ['command', '--first', $helpArgument, 'last'];
+        $script = new SatPysScraper();
 
         $this->expectOutputRegex('/Crea un archivo XML con la clasificación de productos y servicios del SAT/');
-        $script->execute();
+        $script->run($arguments);
     }
 
     public function testRunWithPreparedScraper(): void
@@ -174,7 +36,7 @@ final class SatPysScraperTest extends TestCase
         $jsonOutputFile = $this->createTemporaryFilename();
 
         $argv = ['command', '--xml', $xmlOutputFile, '--json', $jsonOutputFile, '--quiet'];
-        $script = new SatPysScraper('command', $argv, $scraper);
+        $script = new SatPysScraper();
 
         $this->expectOutputString('');
         $result = $script->run(argv: $argv, scraper: $scraper);
@@ -182,22 +44,49 @@ final class SatPysScraperTest extends TestCase
         $this->assertXmlFileEqualsXmlFile($expectedXmlFile, $xmlOutputFile);
         $this->assertJsonFileEqualsJsonFile($expectedJsonFile, $jsonOutputFile);
         $this->assertSame(0, $result);
+
+        unlink($xmlOutputFile);
+        unlink($jsonOutputFile);
     }
 
     public function testRunWithError(): void
     {
-        $scraper = $this->createFakeScraper();
-        $argv = ['command'];
-        $script = new SatPysScraper('command', $argv, $scraper);
+        $argv = ['command', '--debug'];
+        $script = new SatPysScraper();
         $stdErrFile = $this->createTemporaryFilename();
 
-        $result = $script->run(argv: $argv, scraper: $scraper, stdErrFile: $stdErrFile);
+        $result = $script->run(argv: $argv, stdErrFile: $stdErrFile);
+        $stdError = (string) file_get_contents($stdErrFile);
+        unlink($stdErrFile);
 
         $this->assertSame(1, $result);
         $this->assertStringContainsString(
             'ERROR: Did not specify --xml or --json arguments',
-            (string) file_get_contents($stdErrFile),
+            $stdError,
             'Expected error was not raised'
         );
+    }
+
+    public function testRunWithTriesAndClientServerError(): void
+    {
+        // if tries is 2 then a different debug message is shown
+        // if tries is 4 then error is: Mock queue is empty
+        $argv = ['command', '--xml', '-', '--tries', '3', '--debug'];
+        $script = new SatPysScraper();
+        $scraper = $this->createPreparedScraperQueue([
+            new Response(500, reason: 'Internal Server Error'),
+            new Response(500, reason: 'Internal Server Error'),
+            new Response(500, reason: 'Internal Server Error'),
+        ]);
+        $stdErrFile = $this->createTemporaryFilename();
+
+        $result = $script->run(argv: $argv, scraper: $scraper, stdErrFile: $stdErrFile);
+        $stdError = (string) file_get_contents($stdErrFile);
+        unlink($stdErrFile);
+
+        $this->assertSame(1, $result);
+        $this->assertStringContainsString('ERROR: Server error', $stdError, 'Expected error was not raised');
+        $this->assertStringContainsString('The procedure was executed 3 times', $stdError);
+        $this->assertStringContainsString(ServerException::class, $stdError, 'Class was not printed');
     }
 }

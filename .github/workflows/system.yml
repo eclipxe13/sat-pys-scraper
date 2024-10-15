@@ -43,6 +43,4 @@ jobs:
       - name: Install project dependencies
         run: composer upgrade --no-interaction --no-progress --prefer-dist --no-dev
       - name: System test with PHP ${{ matrix.php-version }}
-        run: php bin/sat-pys-scraper --json build/result.json --xml build/result.xml --sort key
-        env:
-          MAX_TRIES: 5
+        run: php bin/sat-pys-scraper --tries 5 --json build/result.json --xml build/result.xml --sort key
