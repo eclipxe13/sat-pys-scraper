@@ -140,6 +140,20 @@ Un objeto `Classification` solamente contiene las propiedades `key` y `name`.
 
 Todos los objetos de datos implementan `JsonSerializable`, por lo que puedes usar esta característica para exportar a formato JSON.
 
+### Excepciones
+
+La clase `Scraper` y -por consecuencia- también la clase `Generator` generan excepciones.
+En el caso de una excepción de tipo HTTP se tira una excepción `HttpException`.
+En el caso de una excepción HTTP y tenga un código de error del servicio remoto se tira una excepción `HttpServerException`.
+
+La jerarquía de excepciones es:
+
+```text
+- PysException (interface)
+    - HttpException (class)
+        - HttpServerException (class)
+```
+
 ## Soporte
 
 Puedes obtener soporte abriendo un ticket en Github.

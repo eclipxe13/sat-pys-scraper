@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpCfdi\SatPysScraper\Tests\Unit;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use LogicException;
 use PhpCfdi\SatPysScraper\Scraper;
 use PhpCfdi\SatPysScraper\ScraperInterface;
@@ -66,6 +68,15 @@ abstract class TestCase extends \PhpCfdi\SatPysScraper\Tests\TestCase
             ]],
         ]);
         $client = new Client(['handler' => $handler]);
+        return new Scraper($client);
+    }
+
+    /** @param array<mixed> $queue */
+    public function createPreparedScraperQueue(array $queue): ScraperInterface
+    {
+        $mockHandler = new MockHandler($queue);
+        $handlerStack = HandlerStack::create($mockHandler);
+        $client = new Client(['handler' => $handlerStack]);
         return new Scraper($client);
     }
 

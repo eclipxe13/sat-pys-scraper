@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PhpCfdi\SatPysScraper;
 
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\RequestOptions;
 use LogicException;
 use Symfony\Component\DomCrawler\Crawler;
@@ -70,27 +72,41 @@ final class Scraper implements ScraperInterface
         return $this->crawler;
     }
 
+    /**
+     * @throws Exceptions\HttpException
+     */
     private function sendGet(): Crawler
     {
-        $response = $this->client->request('GET', self::PYS_URL);
+        try {
+            $response = $this->client->request('GET', self::PYS_URL);
+        } catch (GuzzleException $exception) {
+            throw $this->wrapGuzzleException($exception);
+        }
         $crawler = new Crawler((string) $response->getBody(), self::PYS_URL);
         $this->crawler = $crawler;
         return $crawler;
     }
 
-    /** @param array<string, scalar> $data */
+    /**
+     * @param array<string, scalar> $data
+     * @throws Exceptions\HttpException
+     */
     private function sendPost(array $data): Crawler
     {
         $currentState = $this->extractState($this->getLastCrawler());
-        $response = $this->client->request('POST', self::PYS_URL, [
-            RequestOptions::HEADERS => [
-                'Accept-Encoding' => 'gzip, deflate',
-                'Referer' => self::PYS_URL,
-                'X-Requested-With' => 'XMLHttpRequest',
-                'X-Microsoft-Ajax' => 'delta=false',
-            ],
-            RequestOptions::FORM_PARAMS => array_merge(['__ASYNCPOST' => 'false'], $currentState, $data),
-        ]);
+        try {
+            $response = $this->client->request('POST', self::PYS_URL, [
+                RequestOptions::HEADERS => [
+                    'Accept-Encoding' => 'gzip, deflate',
+                    'Referer' => self::PYS_URL,
+                    'X-Requested-With' => 'XMLHttpRequest',
+                    'X-Microsoft-Ajax' => 'delta=false',
+                ],
+                RequestOptions::FORM_PARAMS => array_merge(['__ASYNCPOST' => 'false'], $currentState, $data),
+            ]);
+        } catch (GuzzleException $exception) {
+            throw $this->wrapGuzzleException($exception);
+        }
         $crawler = new Crawler((string) $response->getBody(), self::PYS_URL);
         $this->crawler = $crawler;
         return $crawler;
@@ -112,5 +128,20 @@ final class Scraper implements ScraperInterface
     {
         $form = $crawler->filter('#form1')->form();
         return $form->getPhpValues();
+    }
+
+    private function wrapGuzzleException(GuzzleException $exception): Exceptions\HttpException
+    {
+        if ($exception instanceof ServerException) {
+            return new Exceptions\HttpServerException(
+                message: $exception->getMessage(),
+                previous: $exception
+            );
+        }
+
+        return new Exceptions\HttpException(
+            message: $exception->getMessage(),
+            previous: $exception
+        );
     }
 }
