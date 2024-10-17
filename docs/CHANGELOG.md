@@ -11,6 +11,15 @@ versión, aunque sí su incorporación en la rama principal de trabajo. Generalm
 
 ## Listado de cambios
 
+### Versión 3.0.2 2024-10-17
+
+A la herramienta `bin/sat-pys-scraper` se le puede definir un número máximo de ejecuciones en la 
+variable de entorno `MAX_TRIES`, de forma predeterminada usa el valor `1`. 
+Con este cambio se intenta resolver el problema de error `500 Internal Server Error` de la 
+aplicación de Productos y Servicios del SAT.
+
+En el flujo de trabajo `system.yml` en el trabajo `system-tests` se configura `MAX_TRIES` a `5`.
+
 ### Versión 3.0.1 2024-10-15
 
 La aplicación del SAT devuelve un error 500 frecuentemente (1 de cada 3 veces) desde 2024-07-15.

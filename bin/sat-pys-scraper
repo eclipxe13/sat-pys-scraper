@@ -7,4 +7,15 @@ use PhpCfdi\SatPysScraper\App\SatPysScraper;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-exit(SatPysScraper::run($argv));
+exit(call_user_func(function (string ...$argv): int {
+    $result = 1;
+    $maxTries = ($_SERVER['MAX_TRIES'] ?? null) ?? ($_ENV['MAX_TRIES'] ?? null);
+    $maxTries = is_numeric($maxTries) ? intval($maxTries) : 1;
+    for ($try = 0; $try < $maxTries; $try++) {
+        $result = SatPysScraper::run($argv);
+        if (0 === $result) {
+            break;
+        }
+    }
+    return $result;
+}, ...$argv));
