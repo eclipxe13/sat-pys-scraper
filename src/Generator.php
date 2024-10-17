@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PhpCfdi\SatPysScraper;
 
+use PhpCfdi\SatPysScraper\Exceptions\HttpException;
+use PhpCfdi\SatPysScraper\Exceptions\HttpServerException;
+
 readonly class Generator
 {
     public function __construct(
@@ -12,6 +15,9 @@ readonly class Generator
     ) {
     }
 
+    /**
+     * @throws HttpServerException|HttpException
+     */
     public function generate(): Data\Types
     {
         $types = new Data\Types();

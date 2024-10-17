@@ -5,12 +5,32 @@ declare(strict_types=1);
 namespace PhpCfdi\SatPysScraper\Tests\Integration;
 
 use GuzzleHttp\Client;
+use PhpCfdi\SatPysScraper\Exceptions\HttpServerException;
 use PhpCfdi\SatPysScraper\Scraper;
 use PhpCfdi\SatPysScraper\Tests\TestCase;
 
 class ScraperTest extends TestCase
 {
+    private const MAX_RETRIES = 5;
+
     public function testObtainSequence(): void
+    {
+        do {
+            $try = ($try ?? 0) + 1;
+            try {
+                $this->procedureObtainSequence();
+                $lastException = null;
+                break;
+            } catch (HttpServerException $exception) {
+                $lastException = $exception;
+            }
+        } while ($try < self::MAX_RETRIES);
+        if (null !== $lastException) {
+            throw $lastException;
+        }
+    }
+
+    public function procedureObtainSequence(): void
     {
         $scraper = new Scraper(new Client());
 
