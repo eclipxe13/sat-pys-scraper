@@ -11,6 +11,21 @@ versión, aunque sí su incorporación en la rama principal de trabajo. Generalm
 
 ## Listado de cambios
 
+### Versión 4.0.0 2024-10-17
+
+Esta es una actualización de refactorización que obliga a crear una versión mayor.
+Si no utilizas entidades del espacio de nombres `PhpCfdi\SatPysScraper\App` entonces puedes hacer el cambio 
+de la versión `3.x` a la versión `4.x` sin conflictos. En caso contrario debes revisar tu implementación. 
+
+- Se agrega el parámetro `--debug` que, si existe, vuelca los datos del error de ejecución.
+- Se agrega el parámetro `--tries` que, si existe, reintenta la descarga de información hasta ese número de veces.
+- Se extrae el procesamiento de argumentos a su propia clase.
+- Se extrae el almacenamiento de argumentos a su propia clase en lugar de un arreglo.
+- Se reorganizan las pruebas de acuerdo a los cambios previos.
+- La ejecución del flujo de trabajo `system.yml` en el trabajo `system-tests` se configura con `--tries 5`.
+- Se vuelve a simplificar la herramienta `bin/sat-pys-scraper` para que toda su lógica esté probada.
+- Ya no se usa la variable de entorno `MAX_TRIES`.
+
 ### Versión 3.0.2 2024-10-17
 
 A la herramienta `bin/sat-pys-scraper` se le puede definir un número máximo de ejecuciones en la 

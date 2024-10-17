@@ -6,6 +6,8 @@ namespace PhpCfdi\SatPysScraper\App;
 
 use GuzzleHttp\Client;
 use PhpCfdi\SatPysScraper\Data\Types;
+use PhpCfdi\SatPysScraper\Exceptions\HttpException;
+use PhpCfdi\SatPysScraper\Exceptions\HttpServerException;
 use PhpCfdi\SatPysScraper\Generator;
 use PhpCfdi\SatPysScraper\NullGeneratorTracker;
 use PhpCfdi\SatPysScraper\Scraper;
@@ -15,40 +17,14 @@ use Throwable;
 
 final readonly class SatPysScraper
 {
-    /**
-     * @param list<string> $arguments
-     */
-    public function __construct(private string $command, private array $arguments, private ScraperInterface $scraper)
+    public function printHelp(string $command): void
     {
-    }
-
-    /** @param string[] $argv */
-    public static function run(
-        array $argv,
-        ScraperInterface $scraper = new Scraper(new Client()),
-        string $stdErrFile = 'php://stderr'
-    ): int {
-        $command = (string) array_shift($argv);
-        $argv = array_values($argv);
-        $app = new self($command, $argv, $scraper);
-        try {
-            $app->execute();
-            return 0;
-        } catch (Throwable $exception) {
-            file_put_contents($stdErrFile, 'ERROR: ' . $exception->getMessage() . PHP_EOL, FILE_APPEND);
-            return 1;
-        }
-    }
-
-    public function printHelp(): void
-    {
-        $command = basename($this->command);
         echo <<< HELP
             $command - Crea un archivo XML con la clasificación de productos y servicios del SAT.
 
             Sintaxis:
                 $command help|-h|--help
-                $command [--quiet|-q] [--json|-j JSON_FILE] [--xml|-x XML_FILE]
+                $command [--quiet|-q] [--debug|-d] [--json|-j JSON_FILE] [--xml|-x XML_FILE] [--tries|-t TRIES]
 
             Argumentos:
                 --xml|-x XML_FILE
@@ -59,12 +35,18 @@ final readonly class SatPysScraper
                     los datos generados en formato JSON.
                 --sort|-s SORT
                     Establece el orden de elementos, default: key, se puede usar "key" o "name".
+                --tries|-t TRIES
+                    Establece cuántas veces debe intentar hacer la descarga si encuentra un error de servidor.
+                    Default: 1. El valor debe ser mayor o igual a 1.
+                --debug|-d
+                    Mensajes de intentos e información del error se envían a la salida estándar de error.
                 --quiet|-q
                     Modo de operación silencioso.
 
             Notas:
                 Debe especificar al menos un argumento "--xml" o "--json", o ambos.
                 No se puede especificar "-" como salida de "--xml" y "--json" al mismo tiempo.
+                Al especificar la salida "-" se activa automáticamente el modo silencioso.
 
             Acerca de:
                 Este script pertenece al proyecto https://github.com/phpcfdi/sat-pys-scraper
@@ -74,84 +56,66 @@ final readonly class SatPysScraper
             HELP;
     }
 
-    /** @throws ArgumentException */
-    public function execute(): void
+    /** @param list<string> $argv */
+    public function run(array $argv, ScraperInterface|null $scraper = null, string $stdErrFile = 'php://stderr'): int
     {
-        if ([] !== array_intersect($this->arguments, ['help', '-h', '--help'])) {
-            $this->printHelp();
-            return;
-        }
+        $command = (string) array_shift($argv);
+        $app = new self();
 
-        $arguments = $this->processArguments(...$this->arguments);
-        $tracker = ($arguments['quiet']) ? new NullGeneratorTracker() : new PrinterGeneratorTracker();
-        $types = (new Generator($this->scraper, $tracker))->generate();
-
-        // sort types
-        match ($arguments['sort']) {
-            'key' => $types->sortByKey(),
-            'name' => $types->sortByName(),
-            default => throw new ArgumentException('Unrecognized sort argument'),
-        };
-
-        if ('' !== $arguments['xml']) {
-            $this->toXml($arguments['xml'], $types);
+        if ([] !== array_intersect($argv, ['help', '-h', '--help'])) {
+            $app->printHelp(basename($command));
+            return 0;
         }
-        if ('' !== $arguments['json']) {
-            $this->toJson($arguments['json'], $types);
+        $debug = [] !== array_intersect($argv, ['-d', '--debug']);
+        $try = 0;
+
+        try {
+            $arguments = (new ArgumentsBuilder())->build(...$argv);
+            $debug = $arguments->debug;
+            do {
+                $try = $try + 1;
+                try {
+                    $app->execute($arguments, $scraper);
+                    $serverException = null;
+                    break;
+                } catch (HttpServerException $exception) {
+                    $serverException = $exception;
+                    usleep(1000);
+                }
+            } while ($try < $arguments->tries);
+            if (null !== $serverException) {
+                throw $serverException;
+            }
+        } catch (Throwable $exception) {
+            file_put_contents($stdErrFile, 'ERROR: ' . $exception->getMessage() . PHP_EOL, FILE_APPEND);
+            if ($debug) {
+                file_put_contents($stdErrFile, "The procedure was executed $try times\n", FILE_APPEND);
+                file_put_contents($stdErrFile, print_r($exception, true), FILE_APPEND);
+            }
+            return 1;
         }
+        return 0;
     }
 
-    /**
-     * @return array{xml: string, json: string, quiet: bool, sort: string}
-     * @throws ArgumentException
-     */
-    public function processArguments(string ...$arguments): array
+    /** @throws HttpServerException|HttpException */
+    private function execute(Arguments $arguments, ScraperInterface|null $scraper): void
     {
-        $arguments = array_values($arguments);
-        $xml = '';
-        $json = '';
-        $quiet = false;
-        $sort = 'key';
+        $tracker = ($arguments->quiet) ? new NullGeneratorTracker() : new PrinterGeneratorTracker();
+        $scraper ??= new Scraper(new Client());
+        $types = (new Generator($scraper, $tracker))->generate();
 
-        while ([] !== $arguments) {
-            $argument = (string) array_shift($arguments);
-            if (in_array($argument, ['--xml', '-x'], true)) {
-                $xml = (string) array_shift($arguments);
-            } elseif (in_array($argument, ['--json', '-j'], true)) {
-                $json = (string) array_shift($arguments);
-            } elseif (in_array($argument, ['--sort', '-s'], true)) {
-                $sort = (string) array_shift($arguments);
-                if (! in_array($sort, ['key', 'name'])) {
-                    throw new ArgumentException(sprintf('Invalid sort "%s"', $sort));
-                }
-            } elseif (in_array($argument, ['--quiet', '-q'], true)) {
-                $quiet = true;
-            } else {
-                throw new ArgumentException(sprintf('Invalid argument "%s"', $argument));
-            }
-        }
+        // sort types
+        match ($arguments->sort) {
+            'name' => $types->sortByName(),
+            default => $types->sortByKey(),
+        };
 
-        if ('' === $xml && '' === $json) {
-            throw new ArgumentException('Did not specify --xml or --json arguments');
+        if ('' !== $arguments->xml) {
+            $this->toXml($arguments->xml, $types);
         }
-        if ('-' === $xml && '-' === $json) {
-            throw new ArgumentException('Cannot send --xml and --json result to standard output at the same time');
+        if ('' !== $arguments->json) {
+            $this->toJson($arguments->json, $types);
         }
-        if ('-' === $xml) {
-            $xml = 'php://stdout';
-            $quiet = true;
-        }
-        if ('-' === $json) {
-            $json = 'php://stdout';
-            $quiet = true;
-        }
-
-        return [
-            'xml' => $xml,
-            'json' => $json,
-            'quiet' => $quiet,
-            'sort' => $sort,
-        ];
     }
 
     public function toXml(string $output, Types $types): void
